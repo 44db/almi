@@ -6,7 +6,7 @@ import { addDays } from 'date-fns';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getReports } from '@/queries/report.query';
+import { getReportTrainingCountByEmployee, getReportTrainingCountByPosition, getReportTrainingCountByFacilitator } from '@/queries/report.query';
 
 export default function Reports() {
 		
@@ -18,10 +18,21 @@ export default function Reports() {
 		}
 	]);
 
-	const query = useQuery({
-		queryKey: ['reports', [state[0].startDate, state[0].endDate]],
-		queryFn: () => getReports({ startDate: state[0].startDate, endDate: state[0].endDate}),
-	})
+	
+	const queryTrainingCountByEmployee = useQuery({
+		queryFn: () => getReportTrainingCountByEmployee({ startDate: state[0].startDate, endDate: state[0].endDate}),
+		queryKey: ['getReportTrainingCountByEmployee', [state[0].startDate, state[0].endDate]],
+	});
+
+	const queryTrainingCountByPosition = useQuery({
+		queryFn: () => getReportTrainingCountByPosition({ startDate: state[0].startDate, endDate: state[0].endDate}),
+		queryKey: ['getReportTrainingCountByPosition', [state[0].startDate, state[0].endDate]],
+	});
+
+	const queryTrainingCountByFacilitator = useQuery({
+		queryFn: () => getReportTrainingCountByFacilitator({ startDate: state[0].startDate, endDate: state[0].endDate}),
+		queryKey: ['getReportTrainingCountByFacilitator', [state[0].startDate, state[0].endDate]],
+	});
 	
 
 	return(
@@ -43,28 +54,41 @@ export default function Reports() {
 			/> 
 
 			<div>
-				{ query.isLoading && 'Loading...' }
-				{ query.isError && 'Error' }
-				{ query.isSuccess && (
-					<>
-						<h3 className="text-l font-bold">Number of Training Events by Employee for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByEmployee).map(([key, value]:any) => {
-							return <p key={key}>Employee with id {key} went to { value } Training Event(s)</p>
-						}) }
 
-						<h3 className="mt-3 text-l font-bold">Number of Training Events by Position for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByPosition).map(([key, value]:any) => {
-							return <p key={key}>Employee position {key} went to { value } Training Event(s)</p>
-						}) }
+				<h2 className="text-l font-bold mt-4">Number of Training Events between {state[0].startDate.toLocaleDateString()} - {state[0].endDate.toLocaleDateString()}</h2>
 
-						<h3 className="mt-3 text-l font-bold">Number of Training Events by Facilitator for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByFacilitator).map(([key, value]:any) => {
-							return <p key={key}>Facilitator {key} organized { value } Training Event(s)</p>
-						}) }
-
-
+				<h3 className="text-l font-bold mt-3">By Employee </h3>
+				{ queryTrainingCountByEmployee.isLoading && 'Loading...' }
+				{ queryTrainingCountByEmployee.isError && 'Error' }
+				{ queryTrainingCountByEmployee.isSuccess && (
+					<>						
+						{ Object.entries(queryTrainingCountByEmployee.data).map(([key, employee]:any) => {
+							return <p key={key}>{employee.name} {employee.surname}: {employee.count}</p>
+						})}
 					</>
-				)}													
+				)}
+
+				<h3 className="mt-3 text-l font-bold">By Position</h3>
+				{ queryTrainingCountByPosition.isLoading && 'Loading...' }
+				{ queryTrainingCountByPosition.isError && 'Error' }
+				{ queryTrainingCountByPosition.isSuccess && (
+					<>
+						{ Object.entries(queryTrainingCountByPosition.data).map(([key, value]:any) => {
+							return <p key={key}>{key}: { value }</p>
+						}) }
+					</>
+				)}
+
+				<h3 className="mt-3 text-l font-bold">By Facilitator</h3>
+				{ queryTrainingCountByFacilitator.isLoading && 'Loading...' }
+				{ queryTrainingCountByFacilitator.isError && 'Error' }
+				{ queryTrainingCountByFacilitator.isSuccess && (
+					<>
+						{ Object.entries(queryTrainingCountByFacilitator.data).map(([key, value]:any) => {
+							return <p key={key}>{key}: { value }</p>
+						}) }
+					</>
+				)}								
 			</div>
 
 		</div>

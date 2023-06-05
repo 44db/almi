@@ -122,7 +122,9 @@ const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
 							label="Delete Training"
 							disabled={disabledForm}
 							onClick={() => {
-								delTraining.mutate();
+								if (window.confirm("Are you sure you want to delete this Training?")) {
+									delTraining.mutate();
+								}
 							}}
 						/>
 					)}

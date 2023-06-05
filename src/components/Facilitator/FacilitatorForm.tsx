@@ -122,7 +122,9 @@ const FacilitatorForm: React.FC<Props> = ({ facilitator, ...props }) => {
 							label="Delete Facilitator"
 							disabled={disabledForm}
 							onClick={() => {
-								delFacilitator.mutate();
+								if (window.confirm("Are you sure you want to delete this Facilitator?")) {
+									delFacilitator.mutate();
+								}
 							}}
 						/>
 					)}

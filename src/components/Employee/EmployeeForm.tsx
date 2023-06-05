@@ -150,8 +150,10 @@ const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 						<Delete
 							label="Delete Employee"
 							disabled={disabledForm}
-							onClick={() => {
-								delEmployee.mutate();
+							onClick={() => {								
+								if (window.confirm("Are you sure you want to delete this employee?")) {
+									delEmployee.mutate();
+								}
 							}}
 						/>
 					)}

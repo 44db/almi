@@ -1,9 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {}
 
 const Header: React.FC<Props> = (props) => {
+
+	const router = useRouter();
+
     const navLinks = [
         { title: 'Home', path: '/' },
         { title: 'Trainings', path: '/trainings' },
@@ -18,7 +22,11 @@ const Header: React.FC<Props> = (props) => {
     return (
         <header className="flex flex-wrap justify-around items-center py-2 px-8 bg-teal-700 rounded-xl shadow-lg mb-6" {...props}>
             {navLinks.map((link) => (
-                <Link key={link.path} href={link.path} className={linkClass}>
+                <Link 
+					key={link.path} 
+					href={link.path} 					
+					className={ (router.pathname === link.path) ? linkClass + ' bg-teal-600' : linkClass }
+				>
                     {link.title}
                 </Link>
             ))}

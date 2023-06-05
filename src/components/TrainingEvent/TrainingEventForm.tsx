@@ -232,7 +232,7 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 
 			<FormHeader	
 				newLabel={`New Training Event`}
-				editingLabel={`Editing ${trainingEvent?.name}`}
+				editingLabel={`${trainingEvent?.name}`}
 				newRecord={!trainingEvent}
 			/>
 
@@ -327,7 +327,9 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 							label="Delete Training Event"
 							disabled={disabledForm}
 							onClick={() => {
-								deleteTraining.mutate();
+								if (window.confirm("Are you sure you want to delete this Training Event?")) {
+									deleteTraining.mutate();
+								}
 							}}
 						/>
 					)}
