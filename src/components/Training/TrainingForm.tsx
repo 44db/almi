@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Training } from '@/appTypes/training';
 import { putTraining, postTraining, deleteTraining } from '@/queries/training.query';
 
@@ -17,7 +17,9 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
+	
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	// Form State
 	// **********
@@ -42,6 +44,7 @@ const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
 		mutationKey: training ? ['putTraining', training.id] : ['postTraining'],
 		onMutate: async (newTraining) => {
 			// if (!training) {
+			queryClient.invalidateQueries({ queryKey: ['getTrainings'] })
 			router.push('/trainings');
 			// }
 		},
@@ -75,6 +78,10 @@ const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
 			const payload = {
 				name: trainingName,
 			};
+
+			if (payload.name.trim() === '')
+				return alert('Training Name is required');
+			
 
 			mutateTraining.mutate(payload);
 		},

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Employee } from '@/appTypes/employee';
 
 import { putEmployee, postEmployee, deleteEmployee } from '@/queries/employee.query';
@@ -18,6 +18,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	// Form State
 	// **********	
@@ -46,9 +47,9 @@ const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 		},
 		mutationKey: employee ? ['putTraining', employee.id] : ['postTraining'],
 		onMutate: async () => {
-			if (!employee) {
-				router.push('/employees');
-			}
+			queryClient.invalidateQueries({ queryKey: ['getEmployees'] })
+			router.push('/employees');
+			
 		},
 		onError: (error) => {
 			console.error('Mutation error', error);
@@ -81,6 +82,15 @@ const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 				surname: employeeSurname,
 				position: employeePosition,
 			};
+
+			if (payload.name.trim()	===	'')
+				return alert('Employee Name is required');
+			
+			if (payload.surname.trim()	===	'')
+				return alert('Employee Surname is required');
+
+			if (payload.position.trim()	===	'')
+				return alert('Employee Position is required');
 
 			mutateEmployee.mutate(payload);
 		},

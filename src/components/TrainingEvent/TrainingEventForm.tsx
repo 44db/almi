@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, use } from 'react';
 import { useRouter } from 'next/router';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { TrainingEvent } from '@/appTypes/training-event';
 import { Employee, EmployeeOption } from '@/appTypes/employee';
@@ -46,7 +46,9 @@ interface FacilitatorOption extends Facilitator {
 
 
 const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
+	
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	// Data Fetching
 	// *************
@@ -145,9 +147,11 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 			? ['putTrainingEvent']
 			: ['postTrainingEvent'],
 		onMutate: async (newTrainingEvent: any) => {
-			console.log('onMutate', newTrainingEvent);
+			// console.log('onMutate', newTrainingEvent);
 			// If we are adding a new training event .. redirect to training events page
 			// if (!trainingEvent) {
+
+			queryClient.invalidateQueries({ queryKey: ['getTrainingEvents'] })
 				router.push('/training-events');
 			// }
 		},

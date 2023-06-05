@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Facilitator } from '@/appTypes/facilitator';
 
 import { putFacilitator, postFacilitator, deleteFacilitator } from '@/queries/facilitator.query';
@@ -17,7 +17,9 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const FacilitatorForm: React.FC<Props> = ({ facilitator, ...props }) => {
+	
 	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	// Form State
 	// **********	
@@ -42,9 +44,9 @@ const FacilitatorForm: React.FC<Props> = ({ facilitator, ...props }) => {
 		},
 		mutationKey: facilitator ? ['putTraining', facilitator.id] : ['postTraining'],
 		onMutate: async () => {
-			if (!facilitator) {
-				router.push('/facilitators');
-			}
+			queryClient.invalidateQueries({ queryKey: ['getFacilitators'] })
+			router.push('/facilitators');
+			
 		},
 		onError: (error) => {
 			console.error('Mutation error', error);
@@ -75,6 +77,10 @@ const FacilitatorForm: React.FC<Props> = ({ facilitator, ...props }) => {
 			const payload = {
 				name: facilitatorName,				
 			};
+
+			if (payload.name.trim() === '')
+				return alert('Facilitator Name is required');
+
 
 			mutateFacilitator.mutate(payload);
 		},
