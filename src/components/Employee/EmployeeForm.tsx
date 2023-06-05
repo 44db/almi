@@ -5,12 +5,12 @@ import { Employee } from '@/appTypes/employee';
 
 import { putEmployee, postEmployee, deleteEmployee } from '@/queries/employee.query';
 
-import FormHeader from '@/components/FormUI/FormHeader';
-import FormWrap from '@/components/FormUI/FormWrap';
-import Input from '@/components/FormUI/Input';
-import Submit from '@/components/FormUI/Submit';
-import Delete from '@/components/FormUI/Delete';
-import Status from '@/components/FormUI/Status';
+import FormHeader from '@/components/UIForm/FormHeader';
+import Input from '@/components/UIForm/Input';
+import FormWrap from '@/components/UIForm/FormWrap';
+import Submit from '@/components/UIForm/Submit';
+import Delete from '@/components/UIForm/Delete';
+import Status from '@/components/UIForm/Status';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	employee?: Employee;
@@ -94,7 +94,7 @@ const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 				newLabel={`New Employee`}
 				editingLabel={`Editing ${employee?.name} ${employee?.surname}`}
 				newRecord={!employee}
-			/>			
+			/>		
 
 			<FormWrap onSubmit={handleSubmit}>
 			

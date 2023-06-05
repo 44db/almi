@@ -5,3 +5,8 @@ export interface Employee {
 	position: string;
 	attendanceType?: string;
 }
+
+export interface EmployeeOption extends Employee {
+	value?: number;
+	label?: string;
+}

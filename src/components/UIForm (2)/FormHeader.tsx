@@ -8,10 +8,10 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 const FormHeader: React.FC<Props> = ({ editingLabel, newLabel, newRecord,...props }) => {
 	return(
-		<div className="text-xl font-bold mb-6 text-blue-950">
+		<div className="text-xl font-bold mb-6 text-blue-950" {...props}>
 			{ newRecord
-				? `Editing ${editingLabel}`
-				: newLabel
+				? newLabel
+				: `Editing ${editingLabel}`
 			}
 		</div>
 	)

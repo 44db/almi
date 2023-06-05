@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import Select from 'react-select';
 import { useRouter } from 'next/router';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 import { TrainingEvent } from '@/appTypes/training-event';
-import { Employee } from '@/appTypes/employee';
+import { Employee, EmployeeOption } from '@/appTypes/employee';
 import { Training } from '@/appTypes/training';
 import { Facilitator } from '@/appTypes/facilitator';
 
@@ -19,6 +18,16 @@ import {
 	putTrainingEvent,
 	deleteTrainingEvent,
 } from '@/queries/training-event.query';
+
+import FormHeader from '@/components/UIForm/FormHeader';
+import FormWrap from '@/components/UIForm/FormWrap';
+import SelectInput from '@/components/UIForm/SelectInput';
+import Input from '@/components/UIForm/Input';
+import Submit from '@/components/UIForm/Submit';
+import Delete from '@/components/UIForm/Delete';
+import Status from '@/components/UIForm/Status';
+
+import EmployeeCard from '@/components/TrainingEvent/EmployeeCard';
 
 interface Props {
 	trainingEvent?: TrainingEvent | null;
@@ -34,10 +43,7 @@ interface FacilitatorOption extends Facilitator {
 	label?: string;
 }
 
-interface EmployeeOption extends Employee {
-	value?: number;
-	label?: string;
-}
+
 
 const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 	const router = useRouter();
@@ -124,7 +130,7 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 	const transformEmployees = employees?.map((employee: Employee) => ({
 		...employee,
 		value: employee.id,
-		label: employee.name,
+		label: `${employee.name} ${employee.surname}`,
 	}));
 
 	// Mutations
@@ -200,31 +206,25 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 
 	return (
 		<div className="w-full max-w-2xl flex-col m-auto" {...props}>
-			<h2 className="text-xl font-bold mb-6 text-blue-950">
-				{trainingEvent
-					? `Editing ${trainingEvent.name}`
-					: 'New Training Event'}
-			</h2>
 
-			<form
-				className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-				onSubmit={handleSubmit}
-			>
-				<div className="mb-4">
-					<label className="block text-gray-700 text-m font-bold mb-2">
-						Event Name
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						type="text"
-						value={eventName}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setEventName(e.target.value)
-						}
-						placeholder="Event Name"
-						disabled={disabledForm}
-					/>
-				</div>
+
+			<FormHeader	
+				newLabel={`New Training Event`}
+				editingLabel={`Editing ${trainingEvent?.name}`}
+				newRecord={!trainingEvent}
+			/>
+
+			<FormWrap onSubmit={handleSubmit}>
+
+				<Input
+					label={`Event Name`}
+					value={eventName}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						setEventName(e.target.value)
+					}
+					placeholder={`Event Name`}
+					disabled={disabledForm}
+				/>				
 
 				<div className="mb-4">
 					<label className="block text-gray-700 text-m font-bold mb-2">
@@ -239,193 +239,90 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 					/>
 				</div>
 
-				<div className="mb-4">
-					<label className="block text-gray-700 text-m font-bold mb-2">
-						Trainings
-					</label>
-					<Select
-						name={'trainings'}
-						instanceId={'trainings'}
-						isMulti={true}
-						isLoading={isLoadingTrainings}
-						options={transformTrainings}
-						value={eventTrainings}
-						isDisabled={disabledForm}
-						onChange={(selectedOptions: any) => {
-							setEventTrainings(selectedOptions);
-						}}
-					/>
-				</div>
 
-				<div className="mb-4">
-					<label className="block text-gray-700 text-m font-bold mb-2">
-						Facilitators
-					</label>
-					<Select
-						name={'facilitators'}
-						instanceId={'facilitators'}
-						isLoading={isLoadingFacilitators}
-						options={transformFacilitators}
-						value={eventFacilitator}
-						isDisabled={disabledForm}
-						onChange={(selectedOption: any) => {
-							setEventFacilitator(selectedOption);
-						}}
-					/>
-				</div>
+				<SelectInput
+					label={'Trainings'}
+					name={'trainings'}
+					instanceId={'trainings'}
+					isMulti={true}
+					isLoading={isLoadingTrainings}
+					options={transformTrainings}
+					value={eventTrainings}
+					isDisabled={disabledForm}
+					onChange={(selectedOptions: any) => {
+						setEventTrainings(selectedOptions);
+					}}
+				/>				
 
-				<div className="mb-4">
-					<label className="block text-gray-700 text-m font-bold mb-2">
-						Employees
-					</label>
-					<Select
-						name={'employees'}
-						instanceId={'employees'}
-						isMulti={true}
-						isLoading={isLoadingEmployees}
-						options={transformEmployees}
-						value={eventEmployees}
-						isDisabled={disabledForm}
-						onChange={(selectedOptions: any) => {
-							setEventEmployees(selectedOptions);
-						}}
-					/>
+
+				<SelectInput 
+					label={'Facilitator'}
+					name={'facilitators'}
+					instanceId={'facilitators'}
+					isLoading={isLoadingFacilitators}
+					options={transformFacilitators}
+					value={eventFacilitator}
+					isDisabled={disabledForm}
+					onChange={(selectedOption: any) => {
+						setEventFacilitator(selectedOption);
+					}}
+				/>
+
+				<SelectInput
+					label={'Employees'}
+					name={'employees'}
+					instanceId={'employees'}
+					isMulti={true}
+					isLoading={isLoadingEmployees}
+					options={transformEmployees}
+					value={eventEmployees}
+					isDisabled={disabledForm}
+					onChange={(selectedOptions: any) => {
+						setEventEmployees(selectedOptions);
+					}}
+				>
 
 					{eventEmployees?.map((employee: EmployeeOption) => (
-						<div key={employee.id} className="mb-6 pl-4 border-l-4">
-							<h3 className="text-gray-600 text-m font-bold mb-2 mt-3">
-								{employee.label}
-							</h3>
-							<label className="block text-gray-700 text-sm font-semibold mb-2">
-								Position
-							</label>
-							<input
-								className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-								type="text"
-								value={employee.position}
-								disabled={disabledForm}
-								onChange={(e) =>
-									setEventEmployees(
-										eventEmployees.map(
-											(emp: EmployeeOption) =>
-												emp.value === employee.value
-													? {
-															...emp,
-															position:
-																e.target.value,
-													}
-													: emp
-										)
-									)
-								}
-								placeholder="Position"
-							/>
-
-							<div className="mt-4">
-								<h3 className="block text-gray-700 text-sm font-semibold mb-2">
-									Attendance
-								</h3>
-
-								<label className="block text-gray-700 text-sm mb-2">
-									<input
-										className="mr-1"
-										type="radio"
-										name={`attendanceType-${employee.value}`}
-										value="Physically"
-										checked={
-											employee.attendanceType ===
-											'Physically'
-										}
-										disabled={disabledForm}
-										onChange={(e) =>
-											setEventEmployees(
-												eventEmployees.map(
-													(emp: EmployeeOption) =>
-														emp.value ===
-														employee.value
-															? {
-																	...emp,
-																	attendanceType:
-																		e.target
-																			.value,
-															}
-															: emp
-												)
-											)
-										}
-									/>
-									Physically
-								</label>
-
-								<label className="block text-gray-700 text-sm mb-2">
-									<input
-										className="mr-1"
-										type="radio"
-										name={`attendanceType-${employee.value}`}
-										value="Remotely"
-										disabled={disabledForm}
-										checked={
-											employee.attendanceType ===
-											'Remotely'
-										}
-										onChange={(e) =>
-											setEventEmployees(
-												eventEmployees.map(
-													(emp: EmployeeOption) =>
-														emp.value ===
-														employee.value
-															? {
-																	...emp,
-																	attendanceType:
-																		e.target
-																			.value,
-															}
-															: emp
-												)
-											)
-										}
-									/>
-									Remotely
-								</label>
-							</div>
-						</div>
+						<EmployeeCard 
+							key={employee.id}
+							employee={employee}
+							disabledForm={disabledForm}
+							eventEmployees={eventEmployees}
+							setEventEmployees={setEventEmployees}
+						/>
 					))}
-				</div>
+
+					
+				</SelectInput>
 
 				<div className="flex-row flex justify-between">
-					<button
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300"
-						type="submit"
+					<Submit
 						disabled={disabledForm}
-					>
-						{mutateTrainingEvent.isLoading
-							? 'Saving...'
-							: trainingEvent
-							? 'Update Event'
-							: 'Add Event'}
-					</button>
+						label="Training Event"
+						newRecord={!trainingEvent}
+						isLoading={mutateTrainingEvent.isLoading}
+					/>
 
 					{trainingEvent && (
-						<button
-							className="bg-red-500 hover:bg-red-800 text-white font-bold py2 px-4 rounded focus:outline-none focuse:shadow-outline disabled:bg-red-300"
-							type="button"
+						<Delete
+							label="Delete Training Event"
 							disabled={disabledForm}
 							onClick={() => {
 								deleteTraining.mutate();
 							}}
-						>
-							Delete Event
-						</button>
+						/>
 					)}
 				</div>
 
-				{mutateTrainingEvent.isIdle === false && (
-					<div className="mt-4 bg-gray-400 py-2 px-4 flex-column text-gray-700">
-						{mutateTrainingEvent.isLoading && <p>Saving Data</p>}
-						{mutateTrainingEvent.isSuccess && <p>Data Saved</p>}
-					</div>
-				)}
-			</form>
+				<Status 
+					title='Training Event'
+					isLoading={mutateTrainingEvent.isLoading}
+					isSuccess={mutateTrainingEvent.isSuccess}
+					isIdle={mutateTrainingEvent.isIdle}
+				/>
+				
+			</FormWrap>
+
 		</div>
 	);
 };

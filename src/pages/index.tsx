@@ -1,7 +1,3 @@
-// import styles from '@/styles/Home.module.css';
-// import TrainingForm from '@/components/TrainingForm/TrainingForm';
-// import TrainingsList from '@/components/TrainingsList/TrainingsList';
-
 import Link from 'next/link';
 
 export default function Home() {
@@ -11,9 +7,6 @@ export default function Home() {
 			<p>
 				<Link href="/training-events">Training Events</Link>
 			</p>
-
-			{/* <TrainingForm /> */}
-			{/* <TrainingsList /> */}
 		</div>
 	);
 }
