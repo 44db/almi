@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+// 	provider = "mysql"
+// 	url      = env("DATABASE_URL")
+// }
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Training {
+  id             Int             @id @default(autoincrement())
+  name           String
+  TrainingEvents TrainingEventsOnTrainings[]
+}
+
+model Facilitator {
+  id             Int             @id @default(autoincrement())
+  name           String
+  TrainingEvents TrainingEvent[]
+}
+
+model Employee {
+  id      Int    @id @default(autoincrement())
+  name    String
+  surname String
+  position String @default("Captain")
+
+  trainingEvents TrainingEventsOnEmployees[]
+}
+
+model TrainingEvent {
+  id   Int      @id @default(autoincrement())
+  name String @default("Training Event")
+  date DateTime @default(now())
+
+  trainings TrainingEventsOnTrainings[]
+
+  facilitatorId Int
+  facilitator   Facilitator @relation(fields: [facilitatorId], references: [id])
+
+  employees TrainingEventsOnEmployees[]
+}
+
+model TrainingEventsOnEmployees {
+  employee        Employee      @relation(fields: [employeeId], references: [id])
+  employeeId      Int
+  trainingEvent   TrainingEvent @relation(fields: [trainingEventId], references: [id])
+  trainingEventId Int
+
+  position       String // Position at the time of the event
+  attendanceType String // 'Physically' or 'Remotely'
+
+  @@id([employeeId, trainingEventId])
+}
+
+model TrainingEventsOnTrainings {
+  training        Training      @relation(fields: [trainingId], references: [id])
+  trainingId      Int
+  trainingEvent   TrainingEvent @relation(fields: [trainingEventId], references: [id])
+  trainingEventId Int
+
+  @@id([trainingId, trainingEventId])
+}
+
+// enum AttendanceType {
+// 	PHYSICALLY
+// 	REMOTELY
+// }
