@@ -147,9 +147,9 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 		onMutate: async (newTrainingEvent: any) => {
 			console.log('onMutate', newTrainingEvent);
 			// If we are adding a new training event .. redirect to training events page
-			if (!trainingEvent) {
+			// if (!trainingEvent) {
 				router.push('/training-events');
-			}
+			// }
 		},
 		onError: (error: any) => {
 			console.log('Mutation error', error);
@@ -192,7 +192,25 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 				name: eventName,
 			};
 
+
+			// Validation
+			if (payload.name.trim() === '')
+				return alert('Please enter a name for the event');
+
+			// Filter empty attendances
+			const attendances = payload.employees?.filter((employee: any) => employee.attendanceType === undefined);
+			if (attendances && attendances?.length > 0)
+				return alert('Please select an attendance type for each employee');
+
+			if (payload.facilitatorId === undefined)
+				return alert('Please select a facilitator for the event');
+			
+			if (payload.trainings?.length === 0)
+				return alert('Please select at least one training for the event');
+					
+			
 			mutateTrainingEvent.mutate(payload);
+
 		},
 		[
 			eventName,
@@ -239,35 +257,6 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 					/>
 				</div>
 
-
-				<SelectInput
-					label={'Trainings'}
-					name={'trainings'}
-					instanceId={'trainings'}
-					isMulti={true}
-					isLoading={isLoadingTrainings}
-					options={transformTrainings}
-					value={eventTrainings}
-					isDisabled={disabledForm}
-					onChange={(selectedOptions: any) => {
-						setEventTrainings(selectedOptions);
-					}}
-				/>				
-
-
-				<SelectInput 
-					label={'Facilitator'}
-					name={'facilitators'}
-					instanceId={'facilitators'}
-					isLoading={isLoadingFacilitators}
-					options={transformFacilitators}
-					value={eventFacilitator}
-					isDisabled={disabledForm}
-					onChange={(selectedOption: any) => {
-						setEventFacilitator(selectedOption);
-					}}
-				/>
-
 				<SelectInput
 					label={'Employees'}
 					name={'employees'}
@@ -292,8 +281,34 @@ const TrainingEventForm: React.FC<Props> = ({ trainingEvent, ...props }) => {
 						/>
 					))}
 
-					
 				</SelectInput>
+							
+				<SelectInput 
+					label={'Facilitator'}
+					name={'facilitators'}
+					instanceId={'facilitators'}
+					isLoading={isLoadingFacilitators}
+					options={transformFacilitators}
+					value={eventFacilitator}
+					isDisabled={disabledForm}
+					onChange={(selectedOption: any) => {
+						setEventFacilitator(selectedOption);
+					}}
+				/>	
+
+				<SelectInput
+					label={'Trainings'}
+					name={'trainings'}
+					instanceId={'trainings'}
+					isMulti={true}
+					isLoading={isLoadingTrainings}
+					options={transformTrainings}
+					value={eventTrainings}
+					isDisabled={disabledForm}
+					onChange={(selectedOptions: any) => {
+						setEventTrainings(selectedOptions);
+					}}
+				/>				
 
 				<div className="flex-row flex justify-between">
 					<Submit

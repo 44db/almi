@@ -1,6 +1,4 @@
 import React from 'react';
-// import styles from './Layout.module.scss';
-
 import Header from '@/components/Header/Header';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,7 +7,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 const Layout: React.FC<Props> = ({ children, ...props }) => {
 	return (
-		<div className="container mx-auto px-4 py-8" {...props}>
+		<div className="container mx-auto px-4 py-8 max-w-6xl" {...props}>
 			<Header />
 			{children}
 		</div>

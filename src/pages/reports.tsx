@@ -39,12 +39,8 @@ export default function Reports() {
 				showDateDisplay={true}
 				showPreview={true}								
 				months={1}
-				ranges={state}
-				// direction="vertical"
+				ranges={state}				
 			/> 
-
-			{/* <pre className="whitespace-pre-wrap mt-8">{ JSON.stringify(state) }</pre> */}
-			{/* <Calendar /> */}
 
 			<div>
 				{ query.isLoading && 'Loading...' }
@@ -52,17 +48,17 @@ export default function Reports() {
 				{ query.isSuccess && (
 					<>
 						<h3 className="text-l font-bold">Number of Training Events by Employee for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByEmployee).map(([key, value]) => {
+						{ Object.entries(query.data.trainingCountByEmployee).map(([key, value]:any) => {
 							return <p key={key}>Employee with id {key} went to { value } Training Event(s)</p>
 						}) }
 
 						<h3 className="mt-3 text-l font-bold">Number of Training Events by Position for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByPosition).map(([key, value]) => {
+						{ Object.entries(query.data.trainingCountByPosition).map(([key, value]:any) => {
 							return <p key={key}>Employee position {key} went to { value } Training Event(s)</p>
 						}) }
 
 						<h3 className="mt-3 text-l font-bold">Number of Training Events by Facilitator for a specified period</h3>
-						{ Object.entries(query.data.trainingCountByFacilitator).map(([key, value]) => {
+						{ Object.entries(query.data.trainingCountByFacilitator).map(([key, value]:any) => {
 							return <p key={key}>Facilitator {key} organized { value } Training Event(s)</p>
 						}) }
 

@@ -1,12 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Training } from '@/appTypes/training';
-import {
-	putTraining,
-	postTraining,
-	deleteTraining,
-} from '@/queries/training.query';
+import { putTraining, postTraining, deleteTraining } from '@/queries/training.query';
+
+import FormHeader from '@/components/UIForm/FormHeader';
+import Input from '@/components/UIForm/Input';
+import FormWrap from '@/components/UIForm/FormWrap';
+import Submit from '@/components/UIForm/Submit';
+import Delete from '@/components/UIForm/Delete';
+import Status from '@/components/UIForm/Status';
+
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	training?: Training;
@@ -37,9 +41,9 @@ const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
 		},
 		mutationKey: training ? ['putTraining', training.id] : ['postTraining'],
 		onMutate: async (newTraining) => {
-			if (!training) {
-				router.push('/trainings');
-			}
+			// if (!training) {
+			router.push('/trainings');
+			// }
 		},
 		onError: (error) => {
 			console.error('Mutation error', error);
@@ -79,64 +83,52 @@ const TrainingForm: React.FC<Props> = ({ training, ...props }) => {
 
 	return (
 		<div className="w-full max-w-2xl flex-col m-auto" {...props}>
-			<h2 className="text-xl font-bold mb-6 text-blue-950">
-				{training ? `Editing ${training.name}` : 'New Training'}
-			</h2>
 
-			<form
-				className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-				onSubmit={handleSubmit}
-			>
-				<div className="mb-4">
-					<label className="block text-gray-700 text-m font-bold mb-2">
-						Event Name
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						type="text"
-						value={trainingName}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setTrainingName(e.target.value)
-						}
-						placeholder="Training Name"
-						disabled={disabledForm}
-					/>
-				</div>
+			<FormHeader	
+				newLabel={`New Training`}
+				editingLabel={`${training?.name}`}
+				newRecord={!training}
+			/>	
+			
+			<FormWrap onSubmit={handleSubmit}>
+
+				<Input
+					label="Event Name"
+					value={trainingName}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						setTrainingName(e.target.value)
+					}
+					placeholder="Training Name"
+					disabled={disabledForm}
+				/>
 
 				<div className="flex-row flex justify-between">
-					<button
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-blue-300"
-						type="submit"
+					<Submit
 						disabled={disabledForm}
-					>
-						{mutateTraining.isLoading
-							? 'Saving...'
-							: training
-							? 'Update Training'
-							: 'Add Training'}
-					</button>
+						label="Training"
+						newRecord={!training}
+						isLoading={mutateTraining.isLoading}
+					/>
 
 					{training && (
-						<button
-							className="bg-red-500 hover:bg-red-800 text-white font-bold py2 px-4 rounded focus:outline-none focuse:shadow-outline disabled:bg-red-300"
-							type="button"
+						<Delete
+							label="Delete Training"
 							disabled={disabledForm}
 							onClick={() => {
 								delTraining.mutate();
 							}}
-						>
-							Delete Event
-						</button>
+						/>
 					)}
-				</div>
+				</div>				
 
-				{mutateTraining.isIdle === false && (
-					<div className="mt-4 bg-gray-400 py-2 px-4 flex-column text-gray-700">
-						{mutateTraining.isLoading && <p>Saving Data</p>}
-						{mutateTraining.isSuccess && <p>Data Saved</p>}
-					</div>
-				)}
-			</form>
+				<Status
+					isIdle={mutateTraining.isIdle}
+					isLoading={mutateTraining.isLoading}
+					isSuccess={mutateTraining.isSuccess}
+				/>
+
+				
+			</FormWrap>
 		</div>
 	);
 };

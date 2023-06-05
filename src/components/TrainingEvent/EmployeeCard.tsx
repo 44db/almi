@@ -14,7 +14,7 @@ interface EmployeeCardProps {
 const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, disabledForm, eventEmployees, setEventEmployees }) => {
 	return (
 		<div key={employee.id} className="mb-6 pl-4 border-l-4">
-			<h3 className="text-gray-600 text-m font-bold mb-2 mt-3">
+			<h3 className="text-gray-900 text-m font-bold mb-2 mt-3">
 				{employee.name} {employee.surname}
 			</h3>
 

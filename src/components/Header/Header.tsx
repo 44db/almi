@@ -16,7 +16,7 @@ const Header: React.FC<Props> = (props) => {
     const linkClass = 'text-white hover:bg-teal-600 px-4 py-2 rounded-lg transition duration-200 ease-in-out';
 
     return (
-        <header className="flex justify-around items-center py-4 px-8 bg-teal-700 rounded-xl shadow-lg mb-6" {...props}>
+        <header className="flex flex-wrap justify-around items-center py-2 px-8 bg-teal-700 rounded-xl shadow-lg mb-6" {...props}>
             {navLinks.map((link) => (
                 <Link key={link.path} href={link.path} className={linkClass}>
                     {link.title}

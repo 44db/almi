@@ -92,7 +92,7 @@ const EmployeeForm: React.FC<Props> = ({ employee, ...props }) => {
 
 			<FormHeader	
 				newLabel={`New Employee`}
-				editingLabel={`Editing ${employee?.name} ${employee?.surname}`}
+				editingLabel={`${employee?.name} ${employee?.surname}`}
 				newRecord={!employee}
 			/>		
 
